@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <script>
+        // Function to fetch tasks from the API and display them
+        function fetchTasks() {
+            fetch("http://127.0.0.1:5000/tasks")
+                .then(response => response.json())
+                .then(data => {
+                    const taskList = document.getElementById("task-list");
+                    taskList.innerHTML = "";  // Clear current list
+
+                    data.tasks.forEach(task => {
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `
+                            <span>${task.title} - ${task.done ? "Done" : "Pending"}</span>
+                            <button onclick="deleteTask(${task.id})">Delete</button>
+                        `;
+                        taskList.appendChild(listItem);
+                    });
+                });
+        }
+
+        // Function to add a new task
+        function addTask() {
+            const title = document.getElementById("task-title").value;
+            const done = document.getElementById("task-done").checked;
+
+            fetch("http://127.0.0.1:5000/tasks", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ title: title, done: done })
+            })
+            .then(response => response.json())
+            .then(() => {
+                fetchTasks(); // Refresh task list
+                document.getElementById("task-title").value = ""; // Clear input
+                document.getElementById("task-done").checked = false; // Reset checkbox
+            });
+        }
+
+        // Function to delete a task
+        function deleteTask(taskId) {
+            fetch(`http://127.0.0.1:5000/tasks/${taskId}`, {
+                method: "DELETE"
+            })
+            .then(() => {
+                fetchTasks(); // Refresh task list after deletion
+            });
+        }
+
+        // Fetch tasks when the page loads
+        window.onload = fetchTasks;
+    </script>
+</head>
+<body>
+    <h1>Task Manager</h1>
+
+    <h2>Add a New Task</h2>
+    <form onsubmit="event.preventDefault(); addTask();">
+        <input type="text" id="task-title" placeholder="Task Title" required>
+        <label for="task-done">Done:</label>
+        <input type="checkbox" id="task-done">
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Tasks</h2>
+    <ul id="task-list">
+        <!-- Tasks will be populated here -->
+    </ul>
+</body>
+</html>
