@@ -41,11 +41,5 @@ To run this project, you need Python 3 and the following dependencies:
 - Displays tasks with their status (Done or Not Done).
 - Simple Flask application with no REST API involved.
 
-## Future Improvements
 
-- Implement a REST API to add, update, and delete tasks.
-- Add more functionality like marking tasks as done or deleting tasks directly from the web interface.
 
-## License
-
-This project is open source and available under the MIT License.
